@@ -1,0 +1,68 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* ИСПРАВЛЕНО: Глубокий тёмно-синий, почти черный цвет фона (Navy Black) */
+  background-color: #0a0f1d; 
+  /* ИСПРАВЛЕНО: Яркий желтый цвет для главных заголовков и акцентов */
+  color: #ffd54f;            
+  display: flex;
+  flex-direction: column;
+  align-items: center;     
+  justify-content: center;  
+  min-height: 100vh;        
+  margin: 0;
+  text-align: center;
+}
+
+/* Стили для обычного текста описания, сделаем его чуть мягче (светло-желтым) */
+p {
+  color: #ffe082;
+}
+
+/* Скрываем русский блок на старте */
+.ru { 
+  display: none; 
+}
+
+/* Стиль для кнопки переключения */
+button {
+  /* ИСПРАВЛЕНО: Темно-синяя кнопка с яркой желтой рамкой и желтым текстом */
+  background-color: #111a30; 
+  color: #ffca28;
+  border: 2px solid #ffca28;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 6px;        
+  cursor: pointer;
+  transition: all 0.2s; 
+  margin-bottom: 25px;
+}
+
+/* Эффект при наведении мыши на кнопку */
+button:hover {
+  /* При наведении кнопка заливается желтым, а текст становится темно-синим */
+  background-color: #ffca28; 
+  color: #0a0f1d;
+  box-shadow: 0 0 12px rgba(255, 202, 40, 0.5); /* Неоновое свечение */
+}
+
+/* Стиль для ссылки на вашу игру */
+a {
+  color: #ffee58; /* Ярко-желтый линк */
+  text-decoration: none; 
+  font-weight: 600;
+  border-bottom: 1px dashed #ffee58; /* Красивое пунктирное подчеркивание */
+  transition: all 0.2s;
+}
+
+a:hover {
+  color: #ffffff; /* При наведении ссылка вспыхивает белым */
+  border-bottom-color: #ffffff;
+}
+
+/* Отступ для картинки */
+img {
+  margin-top: 30px;
+  /* Небольшая неоновая подсветка для логотипа Git, чтобы он вписался в тему */
+  filter: drop-shadow(0 0 10px rgba(240, 81, 51, 0.4));
+}

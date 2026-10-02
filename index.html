@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vcs</title>
+    <!-- Подключаем наш внешний файл со стилями -->
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <!-- Кнопка переключения языка -->
+    <button onclick="switchLanguage()">English / Русский</button>
+
+    <!-- Блок с английским текстом (по умолчанию открыт) -->
+    <div id="lang-en" class="en">
+      <h1>Hello! This page in development</h1>
+      <p>Please wait.</p>
+      <!-- ИСПРАВЛЕНО: Ссылка на вашу игру на английском -->
+      <a href="https://vovanca.github.io/Energy-Cat-clicker/">Play Energy Cat Clicker</a>
+    </div>
+
+    <!-- Блок с русским текстом (по умолчанию скрыт) -->
+    <div id="lang-ru" class="ru">
+      <h1>Привет! Эта страница находится в разработке</h1>
+      <p>Пожалуйста, подождите.</p>
+      <!-- ИСПРАВЛЕНО: Ссылка на вашу игру на русском -->
+      <a href="https://vovanca.github.io/Energy-Cat-clicker/">Поиграть в кликер</a>
+    </div>
+
+    <!-- Логотип Git -->
+    <img src="https://wikimedia.org" alt="git logo" width="120">
+<!--  -->
+    <!-- Скрипт переключения языка -->
+    <script>
+      function switchLanguage() {
+        var enBlock = document.getElementById('lang-en');
+        var ruBlock = document.getElementById('lang-ru');
+        
+        if (enBlock.style.display === 'none') {
+          enBlock.style.display = 'block';
+          ruBlock.style.display = 'none';
+        } else {
+          enBlock.style.display = 'none';
+          ruBlock.style.display = 'block';
+        }
+      }
+    </script>
+
+  </body>
+</html>

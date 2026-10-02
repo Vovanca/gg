@@ -1,9 +1,14 @@
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('shrift.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  /* ИСПРАВЛЕНО: Глубокий тёмно-синий, почти черный цвет фона (Navy Black) */
-  background-color: #0a0f1d; 
-  /* ИСПРАВЛЕНО: Яркий желтый цвет для главных заголовков и акцентов */
-  color: #ffd54f;            
+  font-family: 'MyCustomFont', monospace;
+  background-color: #0a0f1d; /* Черно-синий фон вернулся */
+  color: #ffd54f;            /* Желтый текст */
   display: flex;
   flex-direction: column;
   align-items: center;     
@@ -11,26 +16,64 @@ body {
   min-height: 100vh;        
   margin: 0;
   text-align: center;
+  overflow: hidden;
+  
+  background-image: linear-gradient(rgba(255, 213, 79, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 213, 79, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-/* Стили для обычного текста описания, сделаем его чуть мягче (светло-желтым) */
+#welcome-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: #0a0f1d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+.welcome-box {
+  border: 2px dashed #ffca28;
+  padding: 30px 50px;
+  border-radius: 10px;
+  background-color: #111a30;
+  box-shadow: 0 0 20px rgba(255, 202, 40, 0.2);
+}
+
+.blink {
+  animation: blinker 1.5s linear infinite;
+  color: #ffca28;
+  font-weight: bold;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}
+
+h1 {
+  font-size: 28px;
+  text-shadow: 0 0 8px rgba(255, 213, 79, 0.3);
+}
+
 p {
   color: #ffe082;
+  font-size: 18px;
 }
 
-/* Скрываем русский блок на старте */
+/* ИСПРАВЛЕНО: скрытие блоков теперь снова работает правильно */
 .ru { 
   display: none; 
 }
 
-/* Стиль для кнопки переключения */
 button {
-  /* ИСПРАВЛЕНО: Темно-синяя кнопка с яркой желтой рамкой и желтым текстом */
+  font-family: 'MyCustomFont', monospace;
   background-color: #111a30; 
   color: #ffca28;
   border: 2px solid #ffca28;
-  padding: 10px 20px;
-  font-size: 14px;
+  padding: 12px 24px;
+  font-size: 15px;
   font-weight: 700;
   border-radius: 6px;        
   cursor: pointer;
@@ -38,31 +81,59 @@ button {
   margin-bottom: 25px;
 }
 
-/* Эффект при наведении мыши на кнопку */
 button:hover {
-  /* При наведении кнопка заливается желтым, а текст становится темно-синим */
   background-color: #ffca28; 
   color: #0a0f1d;
-  box-shadow: 0 0 12px rgba(255, 202, 40, 0.5); /* Неоновое свечение */
+  box-shadow: 0 0 15px rgba(255, 202, 40, 0.6); 
 }
 
-/* Стиль для ссылки на вашу игру */
-a {
-  color: #ffee58; /* Ярко-желтый линк */
-  text-decoration: none; 
-  font-weight: 600;
-  border-bottom: 1px dashed #ffee58; /* Красивое пунктирное подчеркивание */
-  transition: all 0.2s;
-}
-
-a:hover {
-  color: #ffffff; /* При наведении ссылка вспыхивает белым */
-  border-bottom-color: #ffffff;
-}
-
-/* Отступ для картинки */
 img {
   margin-top: 30px;
-  /* Небольшая неоновая подсветка для логотипа Git, чтобы он вписался в тему */
   filter: drop-shadow(0 0 10px rgba(240, 81, 51, 0.4));
+}
+
+/* Стили для кликера и таймера */
+.click-counter {
+  font-size: 22px;
+  color: #ffca28;
+  font-weight: bold;
+}
+
+.timer-box {
+  font-size: 24px;
+  color: #ff1744; /* Красный неоновый цвет для грозного таймера */
+  font-weight: bold;
+  margin: 20px 0;
+  padding: 10px 20px;
+  border: 1px solid #ff1744;
+  background-color: rgba(255, 23, 68, 0.05);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.2);
+  text-shadow: 0 0 5px rgba(255, 23, 68, 0.5);
+}
+
+.click-zone {
+  margin-top: 20px;
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.05s ease-in-out;
+}
+
+.click-zone:active {
+  transform: scale(0.95);
+}
+/* Красивая рамка для открываемых секретов */
+.secret-component {
+  margin: 20px auto;
+  padding: 15px;
+  border: 1px dashed #00e676;
+  background-color: rgba(0, 230, 118, 0.05);
+  border-radius: 6px;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.1);
+}
+
+.secret-component h3 {
+  margin: 0 0 5px 0;
+  color: #00e676;
 }

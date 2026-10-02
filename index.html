@@ -3,36 +3,174 @@
   <head>
     <meta charset="utf-8">
     <title>Vcs</title>
-    <!-- Подключаем наш внешний файл со стилями -->
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
 
-    <!-- Кнопка переключения языка -->
-    <button onclick="switchLanguage()">English / Русский</button>
-
-    <!-- Блок с английским текстом (по умолчанию открыт) -->
-    <div id="lang-en" class="en">
-      <h1>Hello! This page in development</h1>
-      <p>Please wait.</p>
-      <!-- ИСПРАВЛЕНО: Ссылка на вашу игру на английском -->
-      <a href="https://vovanca.github.io/Energy-Cat-clicker/">Play Energy Cat Clicker</a>
+    <!-- Стартовое окно для входа и запуска музыки -->
+    <div id="welcome-overlay" onclick="startInterface()">
+      <div class="welcome-box">
+        <h1>CLICK ANYWHERE TO ENTER</h1>
+        <p class="blink">КЛИКНИТЕ ДЛЯ ВХОДА</p>
+      </div>
     </div>
 
-    <!-- Блок с русским текстом (по умолчанию скрыт) -->
-    <div id="lang-ru" class="ru">
-      <h1>Привет! Эта страница находится в разработке</h1>
-      <p>Пожалуйста, подождите.</p>
-      <!-- ИСПРАВЛЕНО: Ссылка на вашу игру на русском -->
-      <a href="https://vovanca.github.io/Energy-Cat-clicker/">Поиграть в кликер</a>
+    <!-- Звуки -->
+    <audio id="click-sound" src="click.mp3" preload="auto"></audio>
+    <audio id="bg-music" src="menu_theme.mp3" preload="auto" loop></audio>
+
+    <!-- Основной контент -->
+    <div id="main-content" style="display: none;">
+      <button onclick="switchLanguage()">English / Русский</button>
+
+      <!-- Текст на английском -->
+      <div id="lang-en" class="en">
+        <h1 id="status-title-en">Phase 1: Booting...</h1>
+        <p id="status-desc-en">System is tracking your activity.</p>
+        <p class="click-counter">Clicks: <span id="counter-val-en">0</span></p>
+        <div class="timer-box">Time elapsed: <span id="timer-en">00:00:00</span></div>
+        
+        <!-- Секретные штуки, которые откроются на Фазе 2 -->
+        <div id="secret-box-en" class="secret-component" style="display: none;">
+          <h3>[ UNLOCKED ] Secret Data Accessed</h3>
+          <p>The core terminal has successfully established connection with Drive E.</p>
+        </div>
+      </div>
+
+      <!-- Текст на русском -->
+      <div id="lang-ru" class="ru">
+        <h1 id="status-title-ru">Фаза 1: Загрузка...</h1>
+        <p id="status-desc-ru">Система отслеживает вашу активность.</p>
+        <p class="click-counter">Кликов: <span id="counter-val-ru">0</span></p>
+        <div class="timer-box">Прошло времени: <span id="timer-ru">00:00:00</span></div>
+        
+        <!-- Секретные штуки, которые откроются на Фазе 2 -->
+        <div id="secret-box-ru" class="secret-component" style="display: none;">
+          <h3>[ ОТКРЫТО ] Доступ к секретным данным</h3>
+          <p>Терминал ядра успешно установил скрытое соединение с диском E.</p>
+        </div>
+      </div>
+
+      <!-- Зона кликера -->
+      <div class="click-zone" onclick="makeClick()">
+        <img id="git-logo" src="git.webp" alt="git logo" width="120">
+      </div>
     </div>
 
-    <!-- Логотип Git -->
-    <img src="https://wikimedia.org" alt="git logo" width="120">
-<!--  -->
-    <!-- Скрипт переключения языка -->
     <script>
+      var musicStarted = false;
+      var clickCount = parseInt(localStorage.getItem('vcs_clicks')) || 0;
+      
+      // Таймер идёт С НУЛЯ вверх. Сохраняем каждую секунду
+      var totalSeconds = parseInt(localStorage.getItem('vcs_elapsed_seconds')) || 0;
+
+      function startInterface() {
+        var bgMusic = document.getElementById('bg-music');
+        bgMusic.volume = 0.4;
+        bgMusic.play().catch(function(e) { console.log(e); });
+
+        document.getElementById('welcome-overlay').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        
+        document.getElementById('counter-val-en').innerText = clickCount;
+        document.getElementById('counter-val-ru').innerText = clickCount;
+        updateLogoGlow();
+
+        setInterval(updateTimer, 1000);
+        updateTimer(); 
+      }
+
+      function updateTimer() {
+        totalSeconds++;
+        localStorage.setItem('vcs_elapsed_seconds', totalSeconds);
+
+        // Расчет времени вперед
+        var h = Math.floor(totalSeconds / 3600);
+        var m = Math.floor((totalSeconds % 3600) / 60);
+        var s = totalSeconds % 60;
+
+        var formatTime = function(val) { return val < 10 ? "0" + val : val; };
+
+        var timeString = formatTime(h) + ":" + formatTime(m) + ":" + formatTime(s);
+        document.getElementById('timer-en').innerText = timeString;
+        document.getElementById('timer-ru').innerText = timeString;
+
+        // ПЕРЕКЛЮЧЕНИЕ ФАЗ И ОТКРЫТИЕ ШТУК
+        var titleEn, descEn, titleRu, descRu, phaseColor;
+        var showSecretPhase2 = false;
+
+        if (totalSeconds < 600) { 
+          // Фаза 1: Первые 10 минут (от 0 до 600 секунд)
+          titleEn = "Phase 1: Core Initialization";
+          descEn = "System running stable. Keep exploring.";
+          titleRu = "Фаза 1: Инициализация ядра";
+          descRu = "Система работает стабильно. Продолжайте исследование.";
+          phaseColor = "#29b6f6"; // Голубой
+        } else if (totalSeconds < 3600) { 
+          // Фаза 2: От 10 минут до 1 часа (от 600 до 3600 секунд)
+          titleEn = "Phase 2: UI Expansion";
+          descEn = "New modules detected and opened.";
+          titleRu = "Фаза 2: Расширение интерфейса";
+          descRu = "Обнаружены и открыты новые модули.";
+          phaseColor = "#00e676"; // Зеленый неон
+          showSecretPhase2 = true; // ОТКРЫВАЕМ СЕКРЕТНУЮ ШТУКУ!
+        } else {
+          // Фаза 3: Всё что дольше 1 часа
+          titleEn = "Phase 3: Hyper Sync";
+          descEn = "The terminal has completed global synchronization.";
+          titleRu = "Фаза 3: Гипер-синхронизация";
+          descRu = "Терминал завершил глобальную синхронизацию.";
+          phaseColor = "#ff9100"; // Оранжевый
+          showSecretPhase2 = true;
+        }
+
+        // Обновляем тексты
+        document.getElementById('status-title-en').innerText = titleEn;
+        document.getElementById('status-desc-en').innerText = descEn;
+        document.getElementById('status-title-ru').innerText = titleRu;
+        document.getElementById('status-desc-ru').innerText = descRu;
+        
+        // Управляем видимостью секретных блоков
+        var displayStyle = showSecretPhase2 ? 'block' : 'none';
+        document.getElementById('secret-box-en').style.display = displayStyle;
+        document.getElementById('secret-box-ru').style.display = displayStyle;
+
+        // Меняем цвет таймера под фазу
+        var timers = document.getElementsByClassName('timer-box');
+        for(var i=0; i<timers.length; i++) {
+          timers[i].style.color = phaseColor;
+          timers[i].style.borderColor = phaseColor;
+        }
+      }
+
+      function makeClick() {
+        clickCount++;
+        localStorage.setItem('vcs_clicks', clickCount);
+
+        document.getElementById('counter-val-en').innerText = clickCount;
+        document.getElementById('counter-val-ru').innerText = clickCount;
+
+        var clickAudio = document.getElementById('click-sound');
+        clickAudio.currentTime = 0;
+        clickAudio.play();
+
+        updateLogoGlow();
+      }
+
+      function updateLogoGlow() {
+        var logo = document.getElementById('git-logo');
+        if (clickCount >= 100) {
+          logo.style.filter = "drop-shadow(0 0 25px #ffd54f)";
+        } else if (clickCount >= 25) {
+          logo.style.filter = "drop-shadow(0 0 15px rgba(240, 81, 51, 0.8))";
+        }
+      }
+
       function switchLanguage() {
+        var clickAudio = document.getElementById('click-sound');
+        clickAudio.currentTime = 0;
+        clickAudio.play();
+
         var enBlock = document.getElementById('lang-en');
         var ruBlock = document.getElementById('lang-ru');
         
@@ -45,6 +183,5 @@
         }
       }
     </script>
-
   </body>
 </html>
